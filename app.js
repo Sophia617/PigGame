@@ -14,27 +14,29 @@ GAME RULES:
 - The first player to reach winning scores on GLOBAL score wins the game
 */
 
-//Global Variable
+// GLOBAL VARIABLES
 let scores, roundScore, activePlayer, previousDice, winningScore;
-//state variable
+// STATE VARIABLES
 let holdAndDice,firstRoll;
 
-//DOM Element
-const BUTTONROLL = document.querySelector('.btn-roll');
+// DOM BUTTON
+const BTNROLL = document.querySelector('.btn-roll');
+const BTNHOLD = document.querySelector('.btn-hold');
+const BTNNEWGAME = document.querySelector('.btn-new');
+// DOM ELEMENT
+const TARGETSCORE = document.querySelector('.targetScore');
 const DICE = document.querySelector('.dice');
 const PANEL0 = document.querySelector('.player-0-panel');
 const PANEL1 = document.querySelector('.player-1-panel');
-const BTNHOLD = document.querySelector('.btn-hold');
-const NEWGAME = document.querySelector('.btn-new');
 const NAME0 = document.querySelector('#name-0');
 const NAME1 = document.querySelector('#name-1');
-const TARGETSCORE = document.querySelector('.targetScore');
 
-//Start a new Game when page loaded
+
+// START A NEW GAME WHEN PAGE LOADED
 newGame();
 
 // ROLL DICE BUTTON
-BUTTONROLL.addEventListener("click", function(){
+BTNROLL.addEventListener("click", function(){
     //Set Target score for winning
     winningScore = TARGETSCORE.value;
     //Check whether dice can be rolled
@@ -50,7 +52,7 @@ BUTTONROLL.addEventListener("click", function(){
     }
 });
 
-//HOLD BUTTON
+// HOLD BUTTON
 BTNHOLD.addEventListener("click", function(){
     //If current score is 0
     if (roundScore === 0) {
@@ -61,7 +63,7 @@ BTNHOLD.addEventListener("click", function(){
 });
 
 // NEW GAME BUTTON
-NEWGAME.addEventListener("click", newGame);
+BTNNEWGAME.addEventListener("click", newGame);
 
 
 // ROLL THE DICE FUNCTION
@@ -110,7 +112,7 @@ function holdScores () {
         document.querySelector(`.player-${activePlayer}-panel`).classList.add('winner');
         document.querySelector(`.player-${activePlayer}-panel`).classList.remove('active');
 
-        BUTTONROLL.setAttribute('disabled', true);
+        BTNROLL.setAttribute('disabled', true);
         BTNHOLD.setAttribute('disabled', true);
 
     } else {
@@ -149,7 +151,7 @@ function newGame(){
     winningScore = 0;
     firstRoll = true;
     DICE.style.display = 'none';
-    BUTTONROLL.removeAttribute('disabled');
+    BTNROLL.removeAttribute('disabled');
     BTNHOLD.setAttribute('disabled',true);
     TARGETSCORE.removeAttribute('disabled');
     TARGETSCORE.value = "";

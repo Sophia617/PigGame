@@ -2,14 +2,24 @@
 GAME RULES:
 
 - The game has 2 players, playing in rounds
-- In each turn, a player rolls a dice as many times as he whishes. Each result get added to his ROUND score
+- In each turn, a player rolls a dice as many times as they wish. Each result get added to his ROUND score
 - BUT, if the player rolls a 1, all his ROUND score gets lost. After that, it's the next player's turn
-- The player can choose to 'Hold', which means that his ROUND score gets added to his GLBAL score. After that, it's the next player's turn
-- The first player to reach 100 points on GLOBAL score wins the game
+- A player losses entire scores & round score if they rolls two 6 in row. After that, it's the next player's turn
+- The player can choose to 'Hold', which means that his ROUND score gets added to his GLOBAL score. After that, it's the next player's turn
+- In Input Field, the player set the winning score - Game cannot start without setting the winning score
+- Once the winning score set, the winning score cannot be changed either
+  * They complete the game
+    OR
+  * Click the new game button
+- The first player to reach winning scores on GLOBAL score wins the game
 */
 
-let scores, roundScore, activePlayer;
+//Global Variable
+let scores, roundScore, activePlayer, previousDice, winningScore;
+//state variable
+let holdAndDice,firstRoll;
 
+//DOM Element
 const BUTTONROLL = document.querySelector('.btn-roll');
 const DICE = document.querySelector('.dice');
 const PANEL0 = document.querySelector('.player-0-panel');
@@ -18,11 +28,107 @@ const BTNHOLD = document.querySelector('.btn-hold');
 const NEWGAME = document.querySelector('.btn-new');
 const NAME0 = document.querySelector('#name-0');
 const NAME1 = document.querySelector('#name-1');
+const TARGETSCORE = document.querySelector('.targetScore');
 
-init();
+//Start a new Game when page loaded
+newGame();
 
-// INITIALISING FUNCTION
-function init(){
+// ROLL DICE BUTTON
+BUTTONROLL.addEventListener("click", function(){
+    //Set Target score for winning
+    winningScore = TARGETSCORE.value;
+    //Check whether dice can be rolled
+    if (winningScore !== "" && firstRoll) {
+        firstRoll = false;
+        BTNHOLD.removeAttribute('disabled');
+        rollTheDice();
+        TARGETSCORE.setAttribute('disabled',true);
+    } else if (winningScore === "" && firstRoll) {
+        alert('Please enter target score to start the game!');
+    } else {
+        rollTheDice();
+    }
+});
+
+//HOLD BUTTON
+BTNHOLD.addEventListener("click", function(){
+    //If current score is 0
+    if (roundScore === 0) {
+        alert(`Your round sore is 0. There is nothing to hold! It is next player's turn. Please roll the dice!`);
+    } else {
+        holdAndDice ? holdScores() : alert('You have already clicked Hold button. Please Roll the Dice!');
+    }
+});
+
+// NEW GAME BUTTON
+NEWGAME.addEventListener("click", newGame);
+
+
+// ROLL THE DICE FUNCTION
+function rollTheDice() {
+    //Generate Random Number
+    let dice = Math.round(Math.random()*5)+1;
+
+    //Display the Dice image of random Number
+    DICE.style.display = 'block';
+    DICE.setAttribute('src', `dice-${dice}.png`);
+
+    //Update the round score if the rolled number is NOT 1 OR Not consecutive 6
+    let current = document.querySelector(`#current-${activePlayer}`);
+    if(previousDice === 6 && dice ===6) {
+        scores[activePlayer] = 0;
+        roundScore = 0;
+        document.querySelector(`#score-${activePlayer}`).textContent = '0';
+        nextPlayer();
+
+    } else if(dice!==1){
+        roundScore+=dice;
+        previousDice = dice;
+    } else {
+        previousDice = 0;
+        nextPlayer()
+    }
+    current.innerHTML = roundScore;
+    holdAndDice = true;
+}
+
+// HOLD SCORE FUNCTION
+function holdScores () {
+
+    //Add Current score to Global Score
+    scores[activePlayer] += roundScore;
+
+    //Update UI
+    let playerScore = document.querySelector(`#score-${activePlayer}`);
+    playerScore.innerHTML = scores[activePlayer];
+
+    //check if player won the game
+    if (scores[activePlayer] >= winningScore) {
+        document.querySelector(`#name-${activePlayer}`).innerText = 'WINNER';
+        DICE.style.display = 'none';
+
+        document.querySelector(`.player-${activePlayer}-panel`).classList.add('winner');
+        document.querySelector(`.player-${activePlayer}-panel`).classList.remove('active');
+
+        BUTTONROLL.setAttribute('disabled', true);
+        BTNHOLD.setAttribute('disabled', true);
+
+    } else {
+        nextPlayer();
+    }
+    holdAndDice =false;
+}
+
+// NEXT PLAYER
+function nextPlayer() {
+        activePlayer === 0 ? activePlayer = 1 : activePlayer = 0;
+        roundScore = 0;
+        PANEL0.classList.toggle('active');
+        PANEL1.classList.toggle('active');
+}
+
+// NEW GAME: INITIALISING FUNCTION
+function newGame(){
     document.getElementById('score-0').textContent = 0;
     document.getElementById('score-1').textContent = 0;
     document.getElementById('current-0').textContent = 0;
@@ -40,58 +146,11 @@ function init(){
     scores =[0,0];
     roundScore = 0;
     activePlayer = 0;
+    winningScore = 0;
+    firstRoll = true;
     DICE.style.display = 'none';
     BUTTONROLL.removeAttribute('disabled');
-    BTNHOLD.removeAttribute('disabled');
+    BTNHOLD.setAttribute('disabled',true);
+    TARGETSCORE.removeAttribute('disabled');
+    TARGETSCORE.value = "";
 }
-
-// RUN THE DICE FUNCTION
-BUTTONROLL.addEventListener("click", function(){
-    //Generate Random Number
-    let dice = Math.round(Math.random()*5)+1;
-
-    //Display the Dice image of random Number
-    DICE.style.display = 'block';
-    DICE.setAttribute('src', `dice-${dice}.png`);
-
-    //Update the round score if the rolled number is NOT 1
-    let CURRENT = document.querySelector(`#current-${activePlayer}`);
-    dice!==1 ? roundScore+=dice : nextPlayer();
-    CURRENT.innerHTML = roundScore;
-});
-
-//HOLD FUNCTION
-BTNHOLD.addEventListener("click", function(){
-    //Add Current scare to Global Score
-    scores[activePlayer] += roundScore;
-
-    //Update UI
-    let playerScore =  document.querySelector(`#score-${activePlayer}`);
-    playerScore.innerHTML = scores[activePlayer];
-
-    //check if player won the game
-    if (scores[activePlayer] >= 20) {
-        document.querySelector(`#name-${activePlayer}`).innerText = 'WINNER';
-        DICE.style.display = 'none';
-
-        document.querySelector(`.player-${activePlayer}-panel`).classList.add('winner');
-        document.querySelector(`.player-${activePlayer}-panel`).classList.remove('active');
-
-        BUTTONROLL.setAttribute('disabled',true);
-        BTNHOLD.setAttribute('disabled',true);
-
-    } else {
-        nextPlayer();
-    }
-});
-
-// NEXT PLAYER
-function nextPlayer() {
-    activePlayer === 0 ? activePlayer = 1 : activePlayer =0;
-    roundScore =0;
-    PANEL0.classList.toggle('active');
-    PANEL1.classList.toggle('active');
-}
-
-// START NEW GAME
-NEWGAME.addEventListener("click", init);

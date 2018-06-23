@@ -140,6 +140,17 @@ i {
 .btn-new { top: 45px;}
 .btn-roll { top: 403px;}
 .btn-hold { top: 467px;}
+.targetScore {
+    position: absolute;
+    width: 8.5rem;
+    height: 2.2rem;
+    top: 520px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 1rem;
+    font-weight: 100;
+    text-align: center;
+}
 
 .dice {
     position: absolute;

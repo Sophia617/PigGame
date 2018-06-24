@@ -14,6 +14,12 @@ GAME RULES:
 - The first player who reaches winning scores on GLOBAL score wins the game
 
 
+
 TO START THE GAME:
 
 - Enter Winning (Target) Score and First Player Rolls the Dice
+
+
+PigGame WEBSITE (LIVE):
+- https://sophia617.github.io/PigGame/
+

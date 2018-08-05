@@ -21,5 +21,4 @@ TO START THE GAME:
 
 
 PigGame WEBSITE (LIVE):
-- https://sophia617.github.io/PigGame/
-
+- https://sophia617.github.io/PigGame-in-JavaScript/
